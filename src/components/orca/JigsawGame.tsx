@@ -336,7 +336,7 @@ export function JigsawGame({ onExit }: { onExit: () => void }) {
         </button>
         <div className="min-w-0 text-center">
           <h1 className="font-display text-xl sm:text-3xl font-semibold tracking-tight truncate">
-            Arctic Journey Jigsaw
+            Orca Jigsaw Puzzle
           </h1>
           <p className="font-mono tabular-nums text-cyan-accent text-sm sm:text-base mt-0.5">
             {mm}:{ss} <span className="text-muted-foreground ml-2 text-xs">{lockedCount}/{N * N}</span>
