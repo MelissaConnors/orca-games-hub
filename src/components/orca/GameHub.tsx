@@ -1,5 +1,5 @@
 import { Sparkles, Lock } from "lucide-react";
-import or BEAVER from "@/assets/orca-mascot.png";
+import orcaMascot from "@/assets/orca-mascot.png";
 
 type Game = {
   id: string;
