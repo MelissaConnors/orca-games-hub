@@ -1,4 +1,5 @@
 import { Sparkles, Lock } from "lucide-react";
+import orcaMascot from "@/assets/orca-mascot.png";
 
 type Game = {
   id: string;
@@ -26,7 +27,7 @@ const GAMES: Game[] = [
   {
     id: "pod",
     title: "Pod Matcher",
-    emoji: "🐬",
+    emoji: "🧩",
     description: "Match dorsal fins and saddle patches to reunite the pod.",
     status: "coming-soon",
   },
@@ -37,7 +38,7 @@ export function GameHub({ onPlay }: { onPlay: (id: string) => void }) {
     <div className="min-h-screen px-4 sm:px-8 pb-24">
       <header className="mx-auto max-w-6xl pt-10 sm:pt-16 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-3xl sm:text-4xl animate-float-slow inline-block">🐋</span>
+          <img src={orcaMascot} alt="Orca" className="size-10 sm:size-12 animate-float-slow rounded-full object-cover" />
           <div>
             <h1 className="font-display text-2xl sm:text-3xl font-semibold tracking-tight">Orca Games</h1>
             <p className="text-xs sm:text-sm text-muted-foreground -mt-0.5">A pod of playful ocean games</p>
@@ -99,13 +100,17 @@ function GameCard({ game, index, onPlay }: { game: Game; index: number; onPlay: 
         <div className="relative flex items-start justify-between">
           <div
             className={[
-              "grid place-items-center size-16 rounded-2xl text-4xl",
+              "grid place-items-center size-16 rounded-2xl text-4xl overflow-hidden",
               locked
                 ? "bg-muted/40 grayscale"
                 : "bg-gradient-to-br from-ocean/30 to-cyan-accent/20 group-hover:animate-float",
             ].join(" ")}
           >
-            <span>{game.emoji}</span>
+            {game.id === "trivia" ? (
+              <img src={orcaMascot} alt="Orca" className="size-12 object-cover" />
+            ) : (
+              <span>{game.emoji}</span>
+            )}
           </div>
           {locked ? (
             <span className="inline-flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-muted-foreground bg-muted/40 px-2.5 py-1 rounded-full">

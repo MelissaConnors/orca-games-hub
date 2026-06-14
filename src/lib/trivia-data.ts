@@ -143,7 +143,7 @@ export const SCORE_TIERS: ScoreTier[] = [
   {
     min: 16,
     max: 19,
-    emoji: "🐬",
+    emoji: "🐋",
     title: "Orca Enthusiast",
     description: "Incredible! You practically speak fluent 'Clicks and Whistles'.",
   },
