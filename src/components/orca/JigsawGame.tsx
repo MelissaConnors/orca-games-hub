@@ -518,6 +518,27 @@ export function JigsawGame({ onExit }: { onExit: () => void }) {
         )}
       </div>
 
+      {/* Instructions */}
+      <div className="mx-auto max-w-6xl mt-8 mb-12">
+        <div className="rounded-2xl border border-border/60 bg-[#1C2541]/40 backdrop-blur p-6 md:p-8">
+          <h3 className="font-display text-lg font-semibold tracking-tight mb-4">How to Play</h3>
+          <ul className="space-y-3 text-sm text-muted-foreground">
+            <li className="flex items-start gap-3">
+              <Eye className="size-4 mt-0.5 text-cyan-accent shrink-0" />
+              <span><strong className="text-foreground">Ghost Guide</strong> — Toggle a faint overlay of the complete image on the board to use as a hint while placing pieces.</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <RotateCcw className="size-4 mt-0.5 text-cyan-accent shrink-0" />
+              <span><strong className="text-foreground">Reset</strong> — Shuffle all 25 pieces back into the tray and start a fresh puzzle with a new piece cut pattern.</span>
+            </li>
+            <li className="flex items-start gap-3">
+              <Sparkles className="size-4 mt-0.5 text-cyan-accent shrink-0" />
+              <span><strong className="text-foreground">Solve</strong> — Instantly snap every piece into its correct place to see the finished image.</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
       {showWin && (
         <div className="fixed inset-0 z-50 grid place-items-center bg-black/65 backdrop-blur p-4">
           <div
