@@ -22,7 +22,7 @@ export const TRIVIA_QUESTIONS: TriviaQuestion[] = [
     correctIndex: 1,
   },
   {
-    question: "True or False: Every orca pod speaks the exact same \"language\" of clicks and whistles.",
+    question: 'True or False: Every orca pod speaks the exact same "language" of clicks and whistles.',
     options: ["True", "False"],
     correctIndex: 1,
     note: "Pods have unique dialects!",
@@ -59,11 +59,11 @@ export const TRIVIA_QUESTIONS: TriviaQuestion[] = [
   },
   {
     question: "What is an adult male orca's dorsal fin height capable of reaching?",
-    options: ["2 feet", "4 feet", "Up to 6 feet", "10 feet"],
+    options: ["2 feet", "4 feet", "6 feet", "10 feet"],
     correctIndex: 2,
   },
   {
-    question: "True or False: Orcas use echolocation to \"see\" in dark or murky water.",
+    question: 'True or False: Orcas use echolocation to "see" in dark or murky water.',
     options: ["True", "False"],
     correctIndex: 0,
   },
@@ -143,7 +143,7 @@ export const SCORE_TIERS: ScoreTier[] = [
   {
     min: 16,
     max: 19,
-    emoji: "🐋",
+    emoji: "🫍",
     title: "Orca Enthusiast",
     description: "Incredible! You practically speak fluent 'Clicks and Whistles'.",
   },
@@ -164,7 +164,7 @@ export const SCORE_TIERS: ScoreTier[] = [
   {
     min: 0,
     max: 5,
-    emoji: "🪵",
+    emoji: "🙃",
     title: "Orca Challenged",
     description: "Oh no! Did a seal distract you? Time to dive back in and study up!",
   },
