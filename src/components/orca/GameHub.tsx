@@ -27,7 +27,7 @@ const GAMES: Game[] = [
   {
     id: "pod",
     title: "Pod Matcher",
-    emoji: "🐬",
+    emoji: "🧩",
     description: "Match dorsal fins and saddle patches to reunite the pod.",
     status: "coming-soon",
   },
