@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { ArrowLeft, Check, X, RotateCcw, Home } from "lucide-react";
+import orcaMascot from "@/assets/orca-mascot.png";
 import { TRIVIA_QUESTIONS, getTierForScore, type TriviaQuestion } from "@/lib/trivia-data";
 
 type Phase = "playing" | "results";
