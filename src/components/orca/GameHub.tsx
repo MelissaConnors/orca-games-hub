@@ -38,7 +38,7 @@ export function GameHub({ onPlay }: { onPlay: (id: string) => void }) {
     <div className="min-h-screen px-4 sm:px-8 pb-24">
       <header className="mx-auto max-w-6xl pt-10 sm:pt-16 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <span className="text-3xl sm:text-4xl animate-float-slow inline-block">🐋</span>
+          <img src={orcaMascot} alt="Orca" className="size-10 sm:size-12 animate-float-slow rounded-full object-cover" />
           <div>
             <h1 className="font-display text-2xl sm:text-3xl font-semibold tracking-tight">Orca Games</h1>
             <p className="text-xs sm:text-sm text-muted-foreground -mt-0.5">A pod of playful ocean games</p>
