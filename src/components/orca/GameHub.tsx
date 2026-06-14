@@ -19,7 +19,7 @@ const GAMES: Game[] = [
   },
   {
     id: "jigsaw",
-    title: "Jigsaw Orca",
+    title: "Orca Jigsaw Puzzle",
     emoji: "🧩",
     description: "Reassemble an arctic pod from 25 interlocking pieces. Beat the clock.",
     status: "active",
