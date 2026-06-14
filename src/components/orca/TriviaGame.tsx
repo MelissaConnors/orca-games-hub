@@ -63,7 +63,7 @@ export function TriviaGame({ onExit }: { onExit: () => void }) {
           <ArrowLeft className="size-4" /> All Games
         </button>
         <div className="flex items-center gap-2 text-sm">
-          <span className="text-xl">🐋</span>
+          <img src={orcaMascot} alt="Orca" className="size-7 rounded-full object-cover" />
           <span className="font-display font-semibold">Orca Trivia</span>
         </div>
       </header>
