@@ -18,17 +18,17 @@ const GAMES: Game[] = [
     status: "active",
   },
   {
+    id: "jigsaw",
+    title: "Jigsaw Orca",
+    emoji: "🧩",
+    description: "Reassemble an arctic pod from 25 interlocking pieces. Beat the clock.",
+    status: "active",
+  },
+  {
     id: "dash",
     title: "Orca Dash",
     emoji: "🌊",
     description: "Race through reefs, dodge boats, breach for combo points.",
-    status: "coming-soon",
-  },
-  {
-    id: "pod",
-    title: "Pod Matcher",
-    emoji: "🧩",
-    description: "Match dorsal fins and saddle patches to reunite the pod.",
     status: "coming-soon",
   },
 ];
