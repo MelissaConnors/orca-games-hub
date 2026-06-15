@@ -25,12 +25,20 @@ const GAMES: Game[] = [
     status: "active",
   },
   {
+    id: "crossword",
+    title: "Orca Crossword Puzzle",
+    emoji: "📝",
+    description: "Five levels of orca trivia woven into a progressive crossword challenge.",
+    status: "active",
+  },
+  {
     id: "dash",
     title: "Orca Dash",
     emoji: "🌊",
     description: "Race through reefs, dodge boats, breach for combo points.",
     status: "coming-soon",
   },
+
 ];
 
 export function GameHub({ onPlay }: { onPlay: (id: string) => void }) {
