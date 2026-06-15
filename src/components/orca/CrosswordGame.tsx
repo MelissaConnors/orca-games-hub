@@ -570,7 +570,7 @@ function WinModal({ level, isLast, onAdvance, onClose }: { level: CrosswordLevel
         <p className="text-xs uppercase tracking-[0.25em] text-[#4E9F3D] font-semibold flex items-center justify-center gap-1.5">
           <Sparkles className="size-3" /> Level Completed
         </p>
-        <h2 className="font-display text-3xl font-semibold mt-2">🐋 You did it!</h2>
+        <h2 className="font-display text-3xl font-semibold mt-2">🫍 You did it!</h2>
         <p className="text-white/80 mt-3">
           You conquered <span className="font-semibold text-white">Level {level.id}: {level.title}</span>. The pod has welcomed your wisdom.
         </p>
