@@ -3,6 +3,7 @@ import { useState } from "react";
 import { GameHub } from "@/components/orca/GameHub";
 import { TriviaGame } from "@/components/orca/TriviaGame";
 import { JigsawGame } from "@/components/orca/JigsawGame";
+import { CrosswordGame } from "@/components/orca/CrosswordGame";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -26,6 +27,7 @@ function Index() {
   if (view.screen === "game") {
     if (view.gameId === "trivia") return <TriviaGame onExit={back} />;
     if (view.gameId === "jigsaw") return <JigsawGame onExit={back} />;
+    if (view.gameId === "crossword") return <CrosswordGame onExit={back} />;
   }
 
   return <GameHub onPlay={(id) => setView({ screen: "game", gameId: id })} />;
