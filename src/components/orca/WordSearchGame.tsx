@@ -8,7 +8,9 @@ import {
   type TimedDifficulty,
 } from "@/lib/wordsearch-data";
 
-const STORAGE_KEY = "orca-wordsearch-progress-v2";
+const STORAGE_KEY = "orca-wordsearch-progress-v3";
+const FIRST_LEVEL_ID = WORDSEARCH_LEVELS[0]?.id ?? 1;
+const LAST_LEVEL_ID = WORDSEARCH_LEVELS[WORDSEARCH_LEVELS.length - 1]?.id ?? 1;
 
 type Progress = { unlocked: number; completed: number[] };
 type Mode = { kind: "untimed" } | { kind: "timed"; difficulty: TimedDifficulty };
@@ -19,13 +21,21 @@ const DIR_VEC: Record<WSDirection, [number, number]> = {
 };
 
 function loadProgress(): Progress {
-  if (typeof window === "undefined") return { unlocked: 1, completed: [] };
+  if (typeof window === "undefined") return { unlocked: FIRST_LEVEL_ID, completed: [] };
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { unlocked: 1, completed: [] };
-    return JSON.parse(raw);
+    if (!raw) return { unlocked: FIRST_LEVEL_ID, completed: [] };
+    const parsed = JSON.parse(raw) as Partial<Progress>;
+    const validIds = new Set(WORDSEARCH_LEVELS.map((l) => l.id));
+    const completed = Array.isArray(parsed.completed)
+      ? [...new Set(parsed.completed.filter((id): id is number => Number.isInteger(id) && validIds.has(id)))].sort((a, b) => a - b)
+      : [];
+    const unlocked = Number.isInteger(parsed.unlocked)
+      ? Math.min(Math.max(parsed.unlocked ?? FIRST_LEVEL_ID, FIRST_LEVEL_ID), LAST_LEVEL_ID)
+      : FIRST_LEVEL_ID;
+    return { unlocked, completed };
   } catch {
-    return { unlocked: 1, completed: [] };
+    return { unlocked: FIRST_LEVEL_ID, completed: [] };
   }
 }
 
