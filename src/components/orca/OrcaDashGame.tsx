@@ -28,6 +28,9 @@ type Obstacle = {
 };
 
 type Particle = { id: number; x: number; y: number; life: number; vx: number; vy: number };
+type PodStrike = { id: number; fromX: number; fromY: number; toX: number; toY: number; phase: "start" | "impact" };
+
+const POD_STRIKE_MS = 550;
 
 const COLS = 9;
 const LANES = 5;
