@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, Info, RotateCcw, Lock, Trophy, X, Clock, Sparkles, CheckCircle2 } from "lucide-react";
+import { Orca } from "./Orca";
 import {
   WORDSEARCH_LEVELS,
   TIMED_DIFFICULTIES,
@@ -414,7 +415,7 @@ export function WordSearchGame({ onExit }: { onExit: () => void }) {
       {showWin && (
         <Modal onClose={() => setShowWin(false)}>
           <div className="text-center">
-            <div className="text-5xl mb-2">🫍</div>
+            <Orca size={64} className="mx-auto mb-2" />
             <h3 className="font-display text-2xl font-semibold">Level Complete!</h3>
             <p className="text-sm text-muted-foreground mt-1">
               You found all {level.words.length} words in {level.title}.
