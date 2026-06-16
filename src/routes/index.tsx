@@ -5,6 +5,7 @@ import { TriviaGame } from "@/components/orca/TriviaGame";
 import { JigsawGame } from "@/components/orca/JigsawGame";
 import { CrosswordGame } from "@/components/orca/CrosswordGame";
 import { WordSearchGame } from "@/components/orca/WordSearchGame";
+import { OrcaDashGame } from "@/components/orca/OrcaDashGame";
 
 export const Route = createFileRoute("/")({
   head: () => ({
