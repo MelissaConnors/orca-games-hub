@@ -152,11 +152,12 @@ export function CrosswordGame({ onExit }: { onExit: () => void }) {
     if (el) el.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }, [activePlacement]);
 
-  // Focus management
-  const boardRef = useRef<HTMLDivElement | null>(null);
+  // Focus management — hidden input drives mobile virtual keyboard
+  const hiddenInputRef = useRef<HTMLInputElement | null>(null);
 
   const focusBoard = useCallback(() => {
-    boardRef.current?.focus();
+    // Use preventScroll to avoid page jumping when focusing the off-screen input
+    hiddenInputRef.current?.focus({ preventScroll: true });
   }, []);
 
   const cellIsActiveWord = (r: number, c: number) => {
@@ -180,6 +181,25 @@ export function CrosswordGame({ onExit }: { onExit: () => void }) {
       return { row: r, col: c, dir };
     });
     focusBoard();
+  };
+
+  // Mobile keyboards (Android Gboard etc.) often don't emit reliable keydown
+  // for letter keys — handle the synthetic onChange/onBeforeInput instead.
+  const handleHiddenInput = (e: React.FormEvent<HTMLInputElement>) => {
+    const raw = (e.currentTarget.value || "").replace(/[^a-zA-Z]/g, "");
+    e.currentTarget.value = "";
+    if (!raw) return;
+    const { row, col, dir } = active;
+    if (!isCell(row, col)) return;
+    let r = row, c = col;
+    for (const ch of raw) {
+      if (!isCell(r, c)) break;
+      setLetter(r, c, ch.toUpperCase());
+      const next = advance(r, c, dir, 1);
+      r = next.row;
+      c = next.col;
+    }
+    setActive({ row: r, col: c, dir });
   };
 
   const advance = (r: number, c: number, dir: Direction, step: number): { row: number; col: number } => {
@@ -375,12 +395,36 @@ export function CrosswordGame({ onExit }: { onExit: () => void }) {
       <main className="mx-auto max-w-7xl px-4 sm:px-6 py-6 grid gap-6 lg:grid-cols-[auto_1fr]">
         {/* Board */}
         <section className="flex flex-col items-center">
-          <div
-            ref={boardRef}
-            tabIndex={0}
-            onKeyDown={handleKeyDown}
-            className="inline-block rounded-2xl border border-white/10 bg-[#06111f] p-3 sm:p-4 shadow-2xl outline-none focus:ring-2 focus:ring-[#4E9F3D]/40"
-          >
+          <div className="relative inline-block rounded-2xl border border-white/10 bg-[#06111f] p-3 sm:p-4 shadow-2xl">
+            {/* Hidden input drives the mobile virtual keyboard. */}
+            <input
+              ref={hiddenInputRef}
+              type="text"
+              inputMode="text"
+              autoCapitalize="characters"
+              autoComplete="off"
+              autoCorrect="off"
+              spellCheck={false}
+              aria-label="Crossword input"
+              value=""
+              onChange={handleHiddenInput}
+              onKeyDown={handleKeyDown}
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: 1,
+                height: 1,
+                opacity: 0,
+                pointerEvents: "none",
+                fontSize: 16,
+                border: 0,
+                padding: 0,
+                background: "transparent",
+                color: "transparent",
+                caretColor: "transparent",
+              }}
+            />
             <div className="grid" style={{ gridTemplateColumns: `repeat(${cols}, minmax(0,1fr))` }}>
               {Array.from({ length: rows }).map((_, r) =>
                 Array.from({ length: cols }).map((_, c) => {
@@ -397,10 +441,16 @@ export function CrosswordGame({ onExit }: { onExit: () => void }) {
                   return (
                     <div
                       key={`${r}-${c}`}
-                      onClick={() => handleCellClick(r, c)}
+                      onPointerDown={(e) => {
+                        // Focus synchronously inside the user gesture so the
+                        // mobile virtual keyboard reliably opens.
+                        e.preventDefault();
+                        hiddenInputRef.current?.focus({ preventScroll: true });
+                        handleCellClick(r, c);
+                      }}
                       className={[
                         cellSizeClass,
-                        "relative border border-[#0B192C] flex items-center justify-center font-semibold cursor-pointer select-none transition-colors",
+                        "relative border border-[#0B192C] flex items-center justify-center font-semibold cursor-pointer select-none transition-colors touch-manipulation",
                         isActive
                           ? "bg-[#4E9F3D] text-white"
                           : inWord
