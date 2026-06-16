@@ -82,6 +82,7 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
   const lastFinalTridentRef = useRef(-Infinity);
   const tridentElapsedRef = useRef(0);
   const invulnRef = useRef(0);
+  const podActiveRef = useRef(false);
   const orcaRef = useRef(orca);
   const obstaclesRef = useRef(obstacles);
   const tridentsRef = useRef(tridents);
