@@ -31,6 +31,7 @@ function Index() {
     if (view.gameId === "jigsaw") return <JigsawGame onExit={back} />;
     if (view.gameId === "crossword") return <CrosswordGame onExit={back} />;
     if (view.gameId === "wordsearch") return <WordSearchGame onExit={back} />;
+    if (view.gameId === "dash") return <OrcaDashGame onExit={back} />;
   }
 
   return <GameHub onPlay={(id) => setView({ screen: "game", gameId: id })} />;
