@@ -599,6 +599,10 @@ function HowToPlayModal({ onClose }: { onClose: () => void }) {
               <li><span className="font-medium">Check Grid</span> — incorrect letters flash red briefly.</li>
             </ul>
           </div>
+          <div>
+            <h3 className="font-semibold text-white mb-1">Recommended Screen Size</h3>
+            <p>For the most comfortable typing and navigation, we recommend a screen at least 375 px wide (mobile) or larger.</p>
+          </div>
         </div>
 
         <button onClick={onClose} className="mt-6 w-full rounded-lg bg-[#4E9F3D] hover:brightness-110 text-white font-semibold py-2.5 transition">

@@ -584,6 +584,10 @@ export function JigsawGame({ onExit }: { onExit: () => void }) {
               <Sparkles className="size-4 mt-0.5 text-cyan-accent shrink-0" />
               <span><strong className="text-foreground">Solve</strong> — Instantly snap every piece into its correct place to see the finished image.</span>
             </li>
+            <li className="flex items-start gap-3">
+              <svg className="size-4 mt-0.5 text-cyan-accent shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              <span><strong className="text-foreground">Recommended screen size</strong> — For the best drag-and-drop experience, use a screen at least 768 px wide.</span>
+            </li>
           </ul>
         </div>
       </div>
