@@ -76,7 +76,16 @@ export function GameHub({ onPlay }: { onPlay: (id: string) => void }) {
       </section>
 
       <footer className="mx-auto max-w-6xl mt-24 text-center text-xs text-muted-foreground">
-        Built with whale-sized love. No actual orcas were quizzed in the making of this hub.
+        Built by{" "}
+        <a
+          href="https://www.linkedin.com/in/melissaconnors/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline hover:text-foreground transition-colors"
+        >
+          Melissa Connors
+        </a>{" "}
+        using Lovable, vibes, curiosity, and enthusiasm for orcas. No actual orcas were quizzed in the making of this hub.
       </footer>
     </div>
   );
