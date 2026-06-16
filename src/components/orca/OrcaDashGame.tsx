@@ -243,16 +243,44 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
 
   const callPod = useCallback(() => {
     if (gameOverRef.current || showHelpRef.current) return;
+    if (podActiveRef.current) return;
     if (scoreRef.current < POD_COST) return;
-    setScore(s => s - POD_COST);
     const list = obstaclesRef.current;
-    let totalPts = 0;
-    list.forEach(o => {
-      totalPts += o.points;
-      spawnParticles(o.x + o.width / 2, laneToRow(o.lane) + 0.5);
+    if (list.length === 0) {
+      setScore(s => s - POD_COST);
+      return;
+    }
+    setScore(s => s - POD_COST);
+    podActiveRef.current = true;
+    const oc = orcaRef.current;
+    const strikes: PodStrike[] = list.map((o, i) => ({
+      id: ++particleIdRef.current,
+      fromX: oc.col + 0.5,
+      fromY: oc.row + 0.5,
+      toX: o.x + o.width / 2,
+      toY: laneToRow(o.lane) + 0.5,
+      phase: "start",
+    }));
+    setPodStrikes(strikes);
+    // Kick off transition on next frame
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setPodStrikes(ss => ss.map(s => ({ ...s, phase: "impact" })));
+      });
     });
-    setScore(s => s + totalPts);
-    setObstacles([]);
+    // Snapshot targets so we can score even if obstacles array is replaced
+    const targets = list.map(o => ({ id: o.id, points: o.points, x: o.x + o.width / 2, y: laneToRow(o.lane) + 0.5 }));
+    setTimeout(() => {
+      let totalPts = 0;
+      targets.forEach(t => {
+        totalPts += t.points;
+        spawnParticles(t.x, t.y);
+      });
+      setScore(s => s + totalPts);
+      setObstacles([]);
+      setPodStrikes([]);
+      podActiveRef.current = false;
+    }, POD_STRIKE_MS);
   }, [spawnParticles]);
 
   // Keyboard
