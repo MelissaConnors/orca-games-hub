@@ -8,7 +8,9 @@ import {
   type TimedDifficulty,
 } from "@/lib/wordsearch-data";
 
-const STORAGE_KEY = "orca-wordsearch-progress-v2";
+const STORAGE_KEY = "orca-wordsearch-progress-v3";
+const FIRST_LEVEL_ID = WORDSEARCH_LEVELS[0]?.id ?? 1;
+const LAST_LEVEL_ID = WORDSEARCH_LEVELS[WORDSEARCH_LEVELS.length - 1]?.id ?? 1;
 
 type Progress = { unlocked: number; completed: number[] };
 type Mode = { kind: "untimed" } | { kind: "timed"; difficulty: TimedDifficulty };
@@ -19,13 +21,21 @@ const DIR_VEC: Record<WSDirection, [number, number]> = {
 };
 
 function loadProgress(): Progress {
-  if (typeof window === "undefined") return { unlocked: 1, completed: [] };
+  if (typeof window === "undefined") return { unlocked: FIRST_LEVEL_ID, completed: [] };
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { unlocked: 1, completed: [] };
-    return JSON.parse(raw);
+    if (!raw) return { unlocked: FIRST_LEVEL_ID, completed: [] };
+    const parsed = JSON.parse(raw) as Partial<Progress>;
+    const validIds = new Set(WORDSEARCH_LEVELS.map((l) => l.id));
+    const completed = Array.isArray(parsed.completed)
+      ? [...new Set(parsed.completed.filter((id): id is number => Number.isInteger(id) && validIds.has(id)))].sort((a, b) => a - b)
+      : [];
+    const unlocked = Number.isInteger(parsed.unlocked)
+      ? Math.min(Math.max(parsed.unlocked ?? FIRST_LEVEL_ID, FIRST_LEVEL_ID), LAST_LEVEL_ID)
+      : FIRST_LEVEL_ID;
+    return { unlocked, completed };
   } catch {
-    return { unlocked: 1, completed: [] };
+    return { unlocked: FIRST_LEVEL_ID, completed: [] };
   }
 }
 
@@ -143,6 +153,7 @@ export function WordSearchGame({ onExit }: { onExit: () => void }) {
   const [selecting, setSelecting] = useState<{ start: { r: number; c: number }; current: { r: number; c: number } } | null>(null);
   const [layoutSeed, setLayoutSeed] = useState(0);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const completedLevelRef = useRef<number | null>(null);
 
   const level = WORDSEARCH_LEVELS.find((l) => l.id === levelId)!;
   const layout = useMemo(() => buildLayoutWithRetries(level), [level, layoutSeed]);
@@ -179,14 +190,17 @@ export function WordSearchGame({ onExit }: { onExit: () => void }) {
   useEffect(() => { wonRef.current = null; }, [levelId, layoutSeed]);
   useEffect(() => {
     if (wonRef.current === level.id) return;
-    if (foundWords.size > 0 && foundWords.size === level.words.length) {
+    const completedLevel = level.id;
+    if (level.words.length > 0 && level.words.every((word) => foundWords.has(word))) {
       wonRef.current = level.id;
+      completedLevelRef.current = completedLevel;
       setTimeLeft(null);
       setShowWin(true);
       setProgress((prev) => {
+        const nextUnlocked = Math.min(completedLevel + 1, LAST_LEVEL_ID);
         const next: Progress = {
-          unlocked: Math.max(prev.unlocked, Math.min(level.id + 1, WORDSEARCH_LEVELS.length)),
-          completed: prev.completed.includes(level.id) ? prev.completed : [...prev.completed, level.id],
+          unlocked: Math.max(prev.unlocked, nextUnlocked),
+          completed: prev.completed.includes(completedLevel) ? prev.completed : [...prev.completed, completedLevel],
         };
         saveProgress(next);
         return next;
@@ -406,9 +420,13 @@ export function WordSearchGame({ onExit }: { onExit: () => void }) {
               You found all {level.words.length} words in {level.title}.
             </p>
             <div className="mt-6 flex flex-col sm:flex-row gap-2 justify-center">
-              {level.id < WORDSEARCH_LEVELS.length ? (
+              {completedLevelRef.current !== null && completedLevelRef.current < LAST_LEVEL_ID ? (
                 <button
-                  onClick={() => { setShowWin(false); setLevelId(level.id + 1); }}
+                  onClick={() => {
+                    const nextLevel = Math.min((completedLevelRef.current ?? level.id) + 1, LAST_LEVEL_ID);
+                    setShowWin(false);
+                    setLevelId(nextLevel);
+                  }}
                   className="rounded-xl px-5 py-2.5 text-sm font-semibold text-ocean-foreground"
                   style={{ background: "var(--gradient-ocean)", boxShadow: "var(--shadow-glow)" }}
                 >
