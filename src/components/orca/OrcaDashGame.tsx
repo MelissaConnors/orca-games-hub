@@ -549,6 +549,33 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
           />
         ))}
 
+        {/* Pod strikes */}
+        {podStrikes.map(s => {
+          const cur = s.phase === "impact" ? { x: s.toX, y: s.toY } : { x: s.fromX, y: s.fromY };
+          const dx = s.toX - s.fromX;
+          const dy = s.toY - s.fromY;
+          const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+          const scaleX = dx < 0 ? -1 : 1;
+          return (
+            <div key={s.id}
+              className="absolute grid place-items-center pointer-events-none"
+              style={{
+                left: `${(cur.x - 0.5) * cellPct}%`,
+                top: `${(cur.y - 0.5) * rowPct}%`,
+                width: `${cellPct}%`,
+                height: `${rowPct}%`,
+                fontSize: "clamp(22px, 5vw, 42px)",
+                transform: `rotate(${scaleX === -1 ? 180 - angle : angle}deg) scaleX(${scaleX})`,
+                transition: `left ${POD_STRIKE_MS}ms cubic-bezier(0.4, 0, 0.9, 1), top ${POD_STRIKE_MS}ms cubic-bezier(0.4, 0, 0.9, 1)`,
+                filter: "drop-shadow(0 0 8px var(--cyan-accent))",
+                zIndex: 5,
+              }}
+            >
+              <span>🫍</span>
+            </div>
+          );
+        })}
+
         {/* Flash overlay */}
         {flash > 0 && (
           <div className="absolute inset-0 pointer-events-none" style={{ background: "oklch(0.62 0.22 25)", opacity: flash * 0.5 }} />
