@@ -152,11 +152,12 @@ export function CrosswordGame({ onExit }: { onExit: () => void }) {
     if (el) el.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }, [activePlacement]);
 
-  // Focus management
-  const boardRef = useRef<HTMLDivElement | null>(null);
+  // Focus management — hidden input drives mobile virtual keyboard
+  const hiddenInputRef = useRef<HTMLInputElement | null>(null);
 
   const focusBoard = useCallback(() => {
-    boardRef.current?.focus();
+    // Use preventScroll to avoid page jumping when focusing the off-screen input
+    hiddenInputRef.current?.focus({ preventScroll: true });
   }, []);
 
   const cellIsActiveWord = (r: number, c: number) => {
@@ -180,6 +181,25 @@ export function CrosswordGame({ onExit }: { onExit: () => void }) {
       return { row: r, col: c, dir };
     });
     focusBoard();
+  };
+
+  // Mobile keyboards (Android Gboard etc.) often don't emit reliable keydown
+  // for letter keys — handle the synthetic onChange/onBeforeInput instead.
+  const handleHiddenInput = (e: React.FormEvent<HTMLInputElement>) => {
+    const raw = (e.currentTarget.value || "").replace(/[^a-zA-Z]/g, "");
+    e.currentTarget.value = "";
+    if (!raw) return;
+    const { row, col, dir } = active;
+    if (!isCell(row, col)) return;
+    let r = row, c = col;
+    for (const ch of raw) {
+      if (!isCell(r, c)) break;
+      setLetter(r, c, ch.toUpperCase());
+      const next = advance(r, c, dir, 1);
+      r = next.row;
+      c = next.col;
+    }
+    setActive({ row: r, col: c, dir });
   };
 
   const advance = (r: number, c: number, dir: Direction, step: number): { row: number; col: number } => {
