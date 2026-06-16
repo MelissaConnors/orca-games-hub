@@ -174,9 +174,13 @@ export function WordSearchGame({ onExit }: { onExit: () => void }) {
     return () => clearTimeout(id);
   }, [timeLeft, showWin, showTimeUp]);
 
-  // Win check
+  // Win check — guard so it only fires once per level
+  const wonRef = useRef<number | null>(null);
+  useEffect(() => { wonRef.current = null; }, [levelId, layoutSeed]);
   useEffect(() => {
+    if (wonRef.current === level.id) return;
     if (foundWords.size > 0 && foundWords.size === level.words.length) {
+      wonRef.current = level.id;
       setTimeLeft(null);
       setShowWin(true);
       setProgress((prev) => {
