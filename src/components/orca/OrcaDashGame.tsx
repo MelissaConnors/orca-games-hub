@@ -70,6 +70,7 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
   const [orca, setOrca] = useState<{ col: number; row: number }>({ col: Math.floor(COLS / 2), row: DOCK_ROW });
   const [obstacles, setObstacles] = useState<Obstacle[]>([]);
   const [particles, setParticles] = useState<Particle[]>([]);
+  const [podStrikes, setPodStrikes] = useState<PodStrike[]>([]);
   const [tridents, setTridents] = useState<Set<number>>(new Set()); // inlet indexes 0..INLETS-1
   const [flash, setFlash] = useState(0);
   const [, force] = useState(0);
