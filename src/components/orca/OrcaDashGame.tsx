@@ -28,6 +28,9 @@ type Obstacle = {
 };
 
 type Particle = { id: number; x: number; y: number; life: number; vx: number; vy: number };
+type PodStrike = { id: number; fromX: number; fromY: number; toX: number; toY: number; phase: "start" | "impact" };
+
+const POD_STRIKE_MS = 550;
 
 const COLS = 9;
 const LANES = 5;
@@ -67,6 +70,7 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
   const [orca, setOrca] = useState<{ col: number; row: number }>({ col: Math.floor(COLS / 2), row: DOCK_ROW });
   const [obstacles, setObstacles] = useState<Obstacle[]>([]);
   const [particles, setParticles] = useState<Particle[]>([]);
+  const [podStrikes, setPodStrikes] = useState<PodStrike[]>([]);
   const [tridents, setTridents] = useState<Set<number>>(new Set()); // inlet indexes 0..INLETS-1
   const [flash, setFlash] = useState(0);
   const [, force] = useState(0);
@@ -78,6 +82,7 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
   const lastFinalTridentRef = useRef(-Infinity);
   const tridentElapsedRef = useRef(0);
   const invulnRef = useRef(0);
+  const podActiveRef = useRef(false);
   const orcaRef = useRef(orca);
   const obstaclesRef = useRef(obstacles);
   const tridentsRef = useRef(tridents);
@@ -238,16 +243,44 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
 
   const callPod = useCallback(() => {
     if (gameOverRef.current || showHelpRef.current) return;
+    if (podActiveRef.current) return;
     if (scoreRef.current < POD_COST) return;
-    setScore(s => s - POD_COST);
     const list = obstaclesRef.current;
-    let totalPts = 0;
-    list.forEach(o => {
-      totalPts += o.points;
-      spawnParticles(o.x + o.width / 2, laneToRow(o.lane) + 0.5);
+    if (list.length === 0) {
+      setScore(s => s - POD_COST);
+      return;
+    }
+    setScore(s => s - POD_COST);
+    podActiveRef.current = true;
+    const oc = orcaRef.current;
+    const strikes: PodStrike[] = list.map((o, i) => ({
+      id: ++particleIdRef.current,
+      fromX: oc.col + 0.5,
+      fromY: oc.row + 0.5,
+      toX: o.x + o.width / 2,
+      toY: laneToRow(o.lane) + 0.5,
+      phase: "start",
+    }));
+    setPodStrikes(strikes);
+    // Kick off transition on next frame
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        setPodStrikes(ss => ss.map(s => ({ ...s, phase: "impact" })));
+      });
     });
-    setScore(s => s + totalPts);
-    setObstacles([]);
+    // Snapshot targets so we can score even if obstacles array is replaced
+    const targets = list.map(o => ({ id: o.id, points: o.points, x: o.x + o.width / 2, y: laneToRow(o.lane) + 0.5 }));
+    setTimeout(() => {
+      let totalPts = 0;
+      targets.forEach(t => {
+        totalPts += t.points;
+        spawnParticles(t.x, t.y);
+      });
+      setScore(s => s + totalPts);
+      setObstacles([]);
+      setPodStrikes([]);
+      podActiveRef.current = false;
+    }, POD_STRIKE_MS);
   }, [spawnParticles]);
 
   // Keyboard
@@ -279,7 +312,7 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
     const tick = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
-      if (!showHelpRef.current && !gameOverRef.current) {
+      if (!showHelpRef.current && !gameOverRef.current && !podActiveRef.current) {
         invulnRef.current = Math.max(0, invulnRef.current - dt);
         setFlash(f => Math.max(0, f - dt));
 
@@ -515,6 +548,33 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
             }}
           />
         ))}
+
+        {/* Pod strikes */}
+        {podStrikes.map(s => {
+          const cur = s.phase === "impact" ? { x: s.toX, y: s.toY } : { x: s.fromX, y: s.fromY };
+          const dx = s.toX - s.fromX;
+          const dy = s.toY - s.fromY;
+          const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+          const scaleX = dx < 0 ? -1 : 1;
+          return (
+            <div key={s.id}
+              className="absolute grid place-items-center pointer-events-none"
+              style={{
+                left: `${(cur.x - 0.5) * cellPct}%`,
+                top: `${(cur.y - 0.5) * rowPct}%`,
+                width: `${cellPct}%`,
+                height: `${rowPct}%`,
+                fontSize: "clamp(22px, 5vw, 42px)",
+                transform: `rotate(${scaleX === -1 ? 180 - angle : angle}deg) scaleX(${scaleX})`,
+                transition: `left ${POD_STRIKE_MS}ms cubic-bezier(0.4, 0, 0.9, 1), top ${POD_STRIKE_MS}ms cubic-bezier(0.4, 0, 0.9, 1)`,
+                filter: "drop-shadow(0 0 8px var(--cyan-accent))",
+                zIndex: 5,
+              }}
+            >
+              <span>🫍</span>
+            </div>
+          );
+        })}
 
         {/* Flash overlay */}
         {flash > 0 && (
