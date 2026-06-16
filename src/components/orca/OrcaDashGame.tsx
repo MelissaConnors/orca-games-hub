@@ -335,15 +335,25 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
           .map(p => ({ ...p, x: p.x + p.vx * dt, y: p.y + p.vy * dt, life: p.life - dt }))
           .filter(p => p.life > 0));
 
-        // Tridents
+        // Tridents — at most one active at a time; final inlet has 5s cooldown
+        tridentElapsedRef.current += dt;
         lastTridentRef.current += dt;
         if (lastTridentRef.current > TRIDENT_INTERVAL) {
           lastTridentRef.current = 0;
-          const idx = Math.floor(Math.random() * INLETS);
           setTridents(prev => {
-            const n = new Set(prev);
-            if (n.has(idx)) n.delete(idx); else n.add(idx);
-            return n;
+            if (prev.size > 0) {
+              return new Set(); // hide the active trident
+            }
+            const FINAL = INLETS - 1;
+            const cooling = tridentElapsedRef.current - lastFinalTridentRef.current < 5;
+            const pool: number[] = [];
+            for (let i = 0; i < INLETS; i++) {
+              if (i === FINAL && cooling) continue;
+              pool.push(i);
+            }
+            const idx = pool[Math.floor(Math.random() * pool.length)];
+            if (idx === FINAL) lastFinalTridentRef.current = tridentElapsedRef.current;
+            return new Set([idx]);
           });
         }
       }
