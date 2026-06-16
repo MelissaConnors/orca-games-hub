@@ -75,6 +75,8 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
   const particleIdRef = useRef(0);
   const lastSpawnRef = useRef<number[]>(LANE_CONFIGS.map(() => 0));
   const lastTridentRef = useRef(0);
+  const lastFinalTridentRef = useRef(-Infinity);
+  const tridentElapsedRef = useRef(0);
   const invulnRef = useRef(0);
   const orcaRef = useRef(orca);
   const obstaclesRef = useRef(obstacles);
