@@ -163,38 +163,67 @@ export function JigsawGame({ onExit }: { onExit: () => void }) {
   useEffect(() => {
     const fit = () => {
       const w = window.innerWidth;
+      const h = window.innerHeight;
       let bs: number;
-      if (w < 768) bs = Math.min(w - 40, 380);
-      else bs = Math.min(520, Math.floor((w - 80) * 0.5));
-      bs = Math.floor(bs / N) * N;
+      if (w < 768) {
+        // Leave room for header, controls, tray and instructions on mobile
+        bs = Math.min(w - 32, Math.floor(h * 0.5), 360);
+      } else {
+        bs = Math.min(520, Math.floor((w - 80) * 0.5));
+      }
+      bs = Math.max(N * 30, Math.floor(bs / N) * N);
       setBoardSize(bs);
     };
     fit();
     window.addEventListener("resize", fit);
-    return () => window.removeEventListener("resize", fit);
+    window.addEventListener("orientationchange", fit);
+    return () => {
+      window.removeEventListener("resize", fit);
+      window.removeEventListener("orientationchange", fit);
+    };
   }, []);
 
-  // Measure board origin relative to area (re-runs on layout changes)
+  // Measure board origin relative to area + observe tray for re-scatter
+  const trayRectRef = useRef<{ x: number; y: number; w: number; h: number }>({ x: 0, y: 0, w: 0, h: 0 });
+  const [trayVersion, setTrayVersion] = useState(0);
   useEffect(() => {
     const measure = () => {
       const area = areaRef.current;
       const board = boardRef.current;
-      if (!area || !board) return;
+      const tray = trayRef.current;
+      if (!area || !board || !tray) return;
       const ar = area.getBoundingClientRect();
       const br = board.getBoundingClientRect();
+      const tr = tray.getBoundingClientRect();
       setBoardOrigin({ x: br.left - ar.left, y: br.top - ar.top });
+      const next = { x: tr.left - ar.left, y: tr.top - ar.top, w: tr.width, h: tr.height };
+      const prev = trayRectRef.current;
+      if (
+        Math.abs(prev.x - next.x) > 0.5 ||
+        Math.abs(prev.y - next.y) > 0.5 ||
+        Math.abs(prev.w - next.w) > 0.5 ||
+        Math.abs(prev.h - next.h) > 0.5
+      ) {
+        trayRectRef.current = next;
+        setTrayVersion((v) => v + 1);
+      }
     };
     measure();
     const ro = new ResizeObserver(measure);
     if (areaRef.current) ro.observe(areaRef.current);
+    if (trayRef.current) ro.observe(trayRef.current);
+    if (boardRef.current) ro.observe(boardRef.current);
     window.addEventListener("resize", measure);
+    window.addEventListener("orientationchange", measure);
     window.addEventListener("scroll", measure, true);
     return () => {
       ro.disconnect();
       window.removeEventListener("resize", measure);
+      window.removeEventListener("orientationchange", measure);
       window.removeEventListener("scroll", measure, true);
     };
   }, [boardSize]);
+
 
   // Scatter pieces into the tray (runs on new game / edges change)
   useEffect(() => {
