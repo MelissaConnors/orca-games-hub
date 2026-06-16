@@ -184,9 +184,14 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
     // Determine if we're moving vertically into an obstacle (ram from below or above)
     let rammed = false;
     if ((dRow === -1 || dRow === 1) && nr >= 1 && nr <= LANES) {
-      const lane = DOCK_ROW - nr; // 0..LANES-1
-      const obs = obstaclesRef.current.filter(o => o.lane === lane + 1);
-      const hit = obs.find(o => nc >= Math.floor(o.x) && nc < Math.floor(o.x) + o.width);
+      const laneNum = DOCK_ROW - nr; // 1..LANES (matches obstacle.lane)
+      const hit = obstaclesRef.current.find(o => {
+        if (o.lane !== laneNum) return false;
+        const left = o.x;
+        const right = o.x + o.width;
+        // overlap test against the cell the orca is entering [nc, nc+1)
+        return right > nc && left < nc + 1;
+      });
       if (hit) {
         rammed = true;
         setObstacles(list => list.filter(o => o.id !== hit.id));
