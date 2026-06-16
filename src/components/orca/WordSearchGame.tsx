@@ -8,7 +8,7 @@ import {
   type TimedDifficulty,
 } from "@/lib/wordsearch-data";
 
-const STORAGE_KEY = "orca-wordsearch-progress-v1";
+const STORAGE_KEY = "orca-wordsearch-progress-v2";
 
 type Progress = { unlocked: number; completed: number[] };
 type Mode = { kind: "untimed" } | { kind: "timed"; difficulty: TimedDifficulty };
@@ -174,9 +174,13 @@ export function WordSearchGame({ onExit }: { onExit: () => void }) {
     return () => clearTimeout(id);
   }, [timeLeft, showWin, showTimeUp]);
 
-  // Win check
+  // Win check — guard so it only fires once per level
+  const wonRef = useRef<number | null>(null);
+  useEffect(() => { wonRef.current = null; }, [levelId, layoutSeed]);
   useEffect(() => {
+    if (wonRef.current === level.id) return;
     if (foundWords.size > 0 && foundWords.size === level.words.length) {
+      wonRef.current = level.id;
       setTimeLeft(null);
       setShowWin(true);
       setProgress((prev) => {
