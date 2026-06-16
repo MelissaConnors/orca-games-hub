@@ -1,5 +1,3 @@
-import orcaImg from "@/assets/orca.png";
-
 type Props = {
   className?: string;
   size?: number | string;
@@ -10,7 +8,7 @@ type Props = {
 export function Orca({ className, size, flip, style }: Props) {
   return (
     <img
-      src={orcaImg}
+      src="/orca.png"
       alt="Orca"
       draggable={false}
       className={className}

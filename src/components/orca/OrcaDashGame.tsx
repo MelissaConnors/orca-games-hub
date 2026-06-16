@@ -521,18 +521,20 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
 
         {/* Orca */}
         <div
-          className="absolute grid place-items-center pointer-events-none p-[10%]"
+          className="absolute pointer-events-none"
           style={{
             left: `${orca.col * cellPct}%`,
             top: `${orca.row * rowPct}%`,
             width: `${cellPct}%`,
             height: `${rowPct}%`,
+            padding: "8%",
             transition: "left 0.08s ease-out, top 0.08s ease-out",
             filter: invulnRef.current > 0 ? "drop-shadow(0 0 8px var(--cyan-accent))" : undefined,
             opacity: invulnRef.current > 0 ? 0.7 : 1,
+            boxSizing: "border-box",
           }}
         >
-          <Orca size="100%" />
+          <Orca style={{ width: "100%", height: "100%", display: "block" }} />
         </div>
 
         {/* Particles */}
@@ -558,19 +560,21 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
           const scaleX = dx < 0 ? -1 : 1;
           return (
             <div key={s.id}
-              className="absolute grid place-items-center pointer-events-none p-[10%]"
+              className="absolute pointer-events-none"
               style={{
                 left: `${(cur.x - 0.5) * cellPct}%`,
                 top: `${(cur.y - 0.5) * rowPct}%`,
                 width: `${cellPct}%`,
                 height: `${rowPct}%`,
+                padding: "8%",
+                boxSizing: "border-box",
                 transform: `rotate(${scaleX === -1 ? 180 - angle : angle}deg) scaleX(${scaleX})`,
                 transition: `left ${POD_STRIKE_MS}ms cubic-bezier(0.4, 0, 0.9, 1), top ${POD_STRIKE_MS}ms cubic-bezier(0.4, 0, 0.9, 1)`,
                 filter: "drop-shadow(0 0 8px var(--cyan-accent))",
                 zIndex: 5,
               }}
             >
-              <Orca size="100%" />
+              <Orca style={{ width: "100%", height: "100%", display: "block" }} />
             </div>
           );
         })}
