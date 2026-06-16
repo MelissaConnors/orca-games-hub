@@ -12,6 +12,7 @@ type LaneConfig = {
   dir: 1 | -1;
   width: number; // cells
   spawnEvery: number; // seconds
+  maxOnScreen?: number;
 };
 
 type Obstacle = {
