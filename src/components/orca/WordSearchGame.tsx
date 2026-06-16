@@ -153,6 +153,7 @@ export function WordSearchGame({ onExit }: { onExit: () => void }) {
   const [selecting, setSelecting] = useState<{ start: { r: number; c: number }; current: { r: number; c: number } } | null>(null);
   const [layoutSeed, setLayoutSeed] = useState(0);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const completedLevelRef = useRef<number | null>(null);
 
   const level = WORDSEARCH_LEVELS.find((l) => l.id === levelId)!;
   const layout = useMemo(() => buildLayoutWithRetries(level), [level, layoutSeed]);
@@ -189,14 +190,17 @@ export function WordSearchGame({ onExit }: { onExit: () => void }) {
   useEffect(() => { wonRef.current = null; }, [levelId, layoutSeed]);
   useEffect(() => {
     if (wonRef.current === level.id) return;
+    const completedLevel = level.id;
     if (foundWords.size > 0 && foundWords.size === level.words.length) {
       wonRef.current = level.id;
+      completedLevelRef.current = completedLevel;
       setTimeLeft(null);
       setShowWin(true);
       setProgress((prev) => {
+        const nextUnlocked = Math.min(completedLevel + 1, LAST_LEVEL_ID);
         const next: Progress = {
-          unlocked: Math.max(prev.unlocked, Math.min(level.id + 1, WORDSEARCH_LEVELS.length)),
-          completed: prev.completed.includes(level.id) ? prev.completed : [...prev.completed, level.id],
+          unlocked: Math.max(prev.unlocked, nextUnlocked),
+          completed: prev.completed.includes(completedLevel) ? prev.completed : [...prev.completed, completedLevel],
         };
         saveProgress(next);
         return next;
@@ -416,9 +420,13 @@ export function WordSearchGame({ onExit }: { onExit: () => void }) {
               You found all {level.words.length} words in {level.title}.
             </p>
             <div className="mt-6 flex flex-col sm:flex-row gap-2 justify-center">
-              {level.id < WORDSEARCH_LEVELS.length ? (
+              {completedLevelRef.current !== null && completedLevelRef.current < LAST_LEVEL_ID ? (
                 <button
-                  onClick={() => { setShowWin(false); setLevelId(level.id + 1); }}
+                  onClick={() => {
+                    const nextLevel = Math.min((completedLevelRef.current ?? level.id) + 1, LAST_LEVEL_ID);
+                    setShowWin(false);
+                    setLevelId(nextLevel);
+                  }}
                   className="rounded-xl px-5 py-2.5 text-sm font-semibold text-ocean-foreground"
                   style={{ background: "var(--gradient-ocean)", boxShadow: "var(--shadow-glow)" }}
                 >
