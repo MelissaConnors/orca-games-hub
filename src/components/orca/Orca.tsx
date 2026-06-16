@@ -1,4 +1,4 @@
-import orcaImg from "@/assets/orca.png";
+import orcaImg from "@/assets/orca.png?url";
 
 type Props = {
   className?: string;
