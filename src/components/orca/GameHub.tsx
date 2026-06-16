@@ -32,6 +32,13 @@ const GAMES: Game[] = [
     status: "active",
   },
   {
+    id: "wordsearch",
+    title: "Orca Word Search",
+    emoji: "🔎",
+    description: "Hunt for hidden orca words across five escalating grids. Timed or zen.",
+    status: "active",
+  },
+  {
     id: "dash",
     title: "Orca Dash",
     emoji: "🌊",
