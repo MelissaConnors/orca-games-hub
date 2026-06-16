@@ -42,8 +42,8 @@ const GAMES: Game[] = [
     id: "dash",
     title: "Orca Dash",
     emoji: "🌊",
-    description: "Race through reefs, dodge boats, breach for combo points.",
-    status: "coming-soon",
+    description: "Race across 5 ocean lanes, ram from below for points, call your pod to wipe the screen.",
+    status: "active",
   },
 
 ];
