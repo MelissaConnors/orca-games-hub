@@ -8,7 +8,7 @@ import {
   type TimedDifficulty,
 } from "@/lib/wordsearch-data";
 
-const STORAGE_KEY = "orca-wordsearch-progress-v1";
+const STORAGE_KEY = "orca-wordsearch-progress-v2";
 
 type Progress = { unlocked: number; completed: number[] };
 type Mode = { kind: "untimed" } | { kind: "timed"; difficulty: TimedDifficulty };
