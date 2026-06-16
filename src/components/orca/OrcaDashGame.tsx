@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ArrowLeft, Heart, RotateCcw, Sparkles, Trophy, X, HelpCircle } from "lucide-react";
+import { Orca } from "./Orca";
 
 type LaneKind = "dolphin" | "sailboat" | "shark" | "ferry" | "yacht";
 
@@ -491,7 +492,7 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
               }}
             >
               <div className={`grid place-items-center w-[80%] h-[80%] rounded-md text-2xl ${filled ? "bg-success/30 border border-success/60" : "bg-background/30 border border-border/40"}`}>
-                {filled ? "🫍" : trident ? "🔱" : ""}
+                {filled ? <Orca size="80%" /> : trident ? "🔱" : ""}
               </div>
             </div>
           );
@@ -520,19 +521,18 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
 
         {/* Orca */}
         <div
-          className="absolute grid place-items-center pointer-events-none"
+          className="absolute grid place-items-center pointer-events-none p-[10%]"
           style={{
             left: `${orca.col * cellPct}%`,
             top: `${orca.row * rowPct}%`,
             width: `${cellPct}%`,
             height: `${rowPct}%`,
-            fontSize: "clamp(22px, 5vw, 42px)",
             transition: "left 0.08s ease-out, top 0.08s ease-out",
             filter: invulnRef.current > 0 ? "drop-shadow(0 0 8px var(--cyan-accent))" : undefined,
             opacity: invulnRef.current > 0 ? 0.7 : 1,
           }}
         >
-          <span>🫍</span>
+          <Orca size="100%" />
         </div>
 
         {/* Particles */}
@@ -558,20 +558,19 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
           const scaleX = dx < 0 ? -1 : 1;
           return (
             <div key={s.id}
-              className="absolute grid place-items-center pointer-events-none"
+              className="absolute grid place-items-center pointer-events-none p-[10%]"
               style={{
                 left: `${(cur.x - 0.5) * cellPct}%`,
                 top: `${(cur.y - 0.5) * rowPct}%`,
                 width: `${cellPct}%`,
                 height: `${rowPct}%`,
-                fontSize: "clamp(22px, 5vw, 42px)",
                 transform: `rotate(${scaleX === -1 ? 180 - angle : angle}deg) scaleX(${scaleX})`,
                 transition: `left ${POD_STRIKE_MS}ms cubic-bezier(0.4, 0, 0.9, 1), top ${POD_STRIKE_MS}ms cubic-bezier(0.4, 0, 0.9, 1)`,
                 filter: "drop-shadow(0 0 8px var(--cyan-accent))",
                 zIndex: 5,
               }}
             >
-              <span>🫍</span>
+              <Orca size="100%" />
             </div>
           );
         })}
@@ -632,7 +631,7 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
             <button onClick={() => setShowHelp(false)} className="absolute top-3 right-3 text-muted-foreground hover:text-foreground">
               <X className="size-4" />
             </button>
-            <h2 className="font-display text-2xl font-semibold flex items-center gap-2">🫍 Orca Dash</h2>
+            <h2 className="font-display text-2xl font-semibold flex items-center gap-2"><Orca size={32} /> Orca Dash</h2>
             <p className="text-sm text-muted-foreground mt-1">Cross the ocean lanes to reach the safe pod inlets at the top — and watch out for Tridents (🔱) blocking the goals!</p>
 
             <div className="mt-4 space-y-3 text-sm">
@@ -648,7 +647,7 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
                   <li>🦈 Shark — 15 pts</li>
                   <li>⛴️ Ferry — 20 pts</li>
                   <li>🛥️ Yacht — 100 pts (rare!)</li>
-                  <li>🫍 Safe inlet — 50 pts (+500 bonus for a full pod)</li>
+                  <li className="flex items-center gap-1"><Orca size={18} /> Safe inlet — 50 pts (+500 bonus for a full pod)</li>
                 </ul>
               </div>
               <div>

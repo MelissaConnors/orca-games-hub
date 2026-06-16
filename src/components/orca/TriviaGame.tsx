@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { ArrowLeft, Check, X, RotateCcw, Home } from "lucide-react";
 import orcaMascot from "@/assets/orca-mascot.png";
+import { Orca } from "./Orca";
 import { TRIVIA_QUESTIONS, getTierForScore, type TriviaQuestion } from "@/lib/trivia-data";
 
 type Phase = "playing" | "results";
@@ -182,7 +183,7 @@ function ResultsScreen({
           <p className="mt-1 text-sm text-muted-foreground">{pct}% pod-fluency</p>
 
           <div className="mt-8 inline-flex items-center gap-3 rounded-full border border-border/70 bg-background/40 px-5 py-2">
-            <span className="text-2xl">{tier.emoji}</span>
+            {tier.emoji === "🫍" ? <Orca size={28} /> : <span className="text-2xl">{tier.emoji}</span>}
             <span className="font-display text-lg font-semibold">{tier.title}</span>
           </div>
 

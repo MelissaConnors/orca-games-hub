@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
 import { ArrowLeft, Info, RotateCcw, Eye, CheckCircle2, Lock, Trophy, Sparkles, X } from "lucide-react";
+import { Orca } from "./Orca";
 import { CROSSWORD_LEVELS, type CrosswordLevel } from "@/lib/crossword-data";
 import { buildCrossword, type Placement, type Direction, type LayoutResult } from "@/lib/crossword-layout";
 
@@ -624,7 +625,7 @@ function WinModal({ level, isLast, onAdvance, onClose }: { level: CrosswordLevel
         <p className="text-xs uppercase tracking-[0.25em] text-[#4E9F3D] font-semibold flex items-center justify-center gap-1.5">
           <Sparkles className="size-3" /> Level Completed
         </p>
-        <h2 className="font-display text-3xl font-semibold mt-2">🫍 You did it!</h2>
+        <h2 className="font-display text-3xl font-semibold mt-2 flex items-center justify-center gap-2"><Orca size={36} /> You did it!</h2>
         <p className="text-white/80 mt-3">
           You conquered <span className="font-semibold text-white">Level {level.id}: {level.title}</span>. The pod has welcomed your wisdom.
         </p>
