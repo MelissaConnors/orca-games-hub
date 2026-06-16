@@ -163,38 +163,67 @@ export function JigsawGame({ onExit }: { onExit: () => void }) {
   useEffect(() => {
     const fit = () => {
       const w = window.innerWidth;
+      const h = window.innerHeight;
       let bs: number;
-      if (w < 768) bs = Math.min(w - 40, 380);
-      else bs = Math.min(520, Math.floor((w - 80) * 0.5));
-      bs = Math.floor(bs / N) * N;
+      if (w < 768) {
+        // Leave room for header, controls, tray and instructions on mobile
+        bs = Math.min(w - 32, Math.floor(h * 0.5), 360);
+      } else {
+        bs = Math.min(520, Math.floor((w - 80) * 0.5));
+      }
+      bs = Math.max(N * 30, Math.floor(bs / N) * N);
       setBoardSize(bs);
     };
     fit();
     window.addEventListener("resize", fit);
-    return () => window.removeEventListener("resize", fit);
+    window.addEventListener("orientationchange", fit);
+    return () => {
+      window.removeEventListener("resize", fit);
+      window.removeEventListener("orientationchange", fit);
+    };
   }, []);
 
-  // Measure board origin relative to area (re-runs on layout changes)
+  // Measure board origin relative to area + observe tray for re-scatter
+  const trayRectRef = useRef<{ x: number; y: number; w: number; h: number }>({ x: 0, y: 0, w: 0, h: 0 });
+  const [trayVersion, setTrayVersion] = useState(0);
   useEffect(() => {
     const measure = () => {
       const area = areaRef.current;
       const board = boardRef.current;
-      if (!area || !board) return;
+      const tray = trayRef.current;
+      if (!area || !board || !tray) return;
       const ar = area.getBoundingClientRect();
       const br = board.getBoundingClientRect();
+      const tr = tray.getBoundingClientRect();
       setBoardOrigin({ x: br.left - ar.left, y: br.top - ar.top });
+      const next = { x: tr.left - ar.left, y: tr.top - ar.top, w: tr.width, h: tr.height };
+      const prev = trayRectRef.current;
+      if (
+        Math.abs(prev.x - next.x) > 0.5 ||
+        Math.abs(prev.y - next.y) > 0.5 ||
+        Math.abs(prev.w - next.w) > 0.5 ||
+        Math.abs(prev.h - next.h) > 0.5
+      ) {
+        trayRectRef.current = next;
+        setTrayVersion((v) => v + 1);
+      }
     };
     measure();
     const ro = new ResizeObserver(measure);
     if (areaRef.current) ro.observe(areaRef.current);
+    if (trayRef.current) ro.observe(trayRef.current);
+    if (boardRef.current) ro.observe(boardRef.current);
     window.addEventListener("resize", measure);
+    window.addEventListener("orientationchange", measure);
     window.addEventListener("scroll", measure, true);
     return () => {
       ro.disconnect();
       window.removeEventListener("resize", measure);
+      window.removeEventListener("orientationchange", measure);
       window.removeEventListener("scroll", measure, true);
     };
   }, [boardSize]);
+
 
   // Scatter pieces into the tray (runs on new game / edges change)
   useEffect(() => {
@@ -223,20 +252,39 @@ export function JigsawGame({ onExit }: { onExit: () => void }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [edgesData]);
 
-  // Keep locked pieces aligned when the board moves (resize)
+  // Keep locked pieces aligned + re-scatter unlocked pieces when tray/board resizes
   useEffect(() => {
+    const tr = trayRectRef.current;
+    if (tr.w <= 0 || tr.h <= 0) return;
+    const w = Math.max(10, tr.w - piece);
+    const h = Math.max(10, tr.h - piece - 8);
     setStates((prev) =>
       prev.map((p, i) => {
-        if (!p.locked) return p;
         const def = defs[i];
+        if (!def) return p;
+        if (p.locked) {
+          return {
+            ...p,
+            x: boardOrigin.x + def.col * cell - tab,
+            y: boardOrigin.y + def.row * cell - tab,
+          };
+        }
+        // If the piece is currently outside the tray, snap it back inside.
+        const inside =
+          p.x >= tr.x - 1 &&
+          p.y >= tr.y - 1 &&
+          p.x <= tr.x + tr.w - piece + 1 &&
+          p.y <= tr.y + tr.h - piece + 1;
+        if (inside) return p;
         return {
           ...p,
-          x: boardOrigin.x + def.col * cell - tab,
-          y: boardOrigin.y + def.row * cell - tab,
+          x: tr.x + Math.random() * w,
+          y: tr.y + 8 + Math.random() * h,
         };
       }),
     );
-  }, [boardOrigin.x, boardOrigin.y, cell, tab, defs]);
+  }, [boardOrigin.x, boardOrigin.y, cell, tab, piece, defs, trayVersion]);
+
 
   // Timer
   useEffect(() => {
@@ -421,9 +469,9 @@ export function JigsawGame({ onExit }: { onExit: () => void }) {
           <div
             ref={trayRef}
             className="relative rounded-2xl border border-border/60 bg-[#1C2541]/40 backdrop-blur w-full md:w-[340px] overflow-hidden"
-            style={{ height: boardSize }}
+            style={{ height: typeof window !== "undefined" && window.innerWidth < 768 ? Math.max(180, piece * 2 + 48) : boardSize }}
           >
-            <div className="absolute top-3 left-4 text-[10px] uppercase tracking-[0.2em] text-muted-foreground/80 pointer-events-none">
+            <div className="absolute top-3 left-4 text-[10px] uppercase tracking-[0.2em] text-muted-foreground/80 pointer-events-none z-10">
               Piece Tray
             </div>
             <div
@@ -435,6 +483,7 @@ export function JigsawGame({ onExit }: { onExit: () => void }) {
               }}
             />
           </div>
+
         </div>
 
         {/* Pieces — absolutely positioned inside areaRef */}
