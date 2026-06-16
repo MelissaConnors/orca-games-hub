@@ -178,9 +178,9 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
     if (nc < 0 || nc >= COLS) return;
     if (nr < 0 || nr > DOCK_ROW) return;
 
-    // Determine if we're moving up into an obstacle (ram)
+    // Determine if we're moving vertically into an obstacle (ram from below or above)
     let rammed = false;
-    if (dRow === -1 && nr >= 1 && nr <= LANES) {
+    if ((dRow === -1 || dRow === 1) && nr >= 1 && nr <= LANES) {
       const lane = DOCK_ROW - nr; // 0..LANES-1
       const obs = obstaclesRef.current.filter(o => o.lane === lane + 1);
       const hit = obs.find(o => nc >= Math.floor(o.x) && nc < Math.floor(o.x) + o.width);
