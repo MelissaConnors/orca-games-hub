@@ -191,7 +191,7 @@ export function WordSearchGame({ onExit }: { onExit: () => void }) {
   useEffect(() => {
     if (wonRef.current === level.id) return;
     const completedLevel = level.id;
-    if (foundWords.size > 0 && foundWords.size === level.words.length) {
+    if (level.words.length > 0 && level.words.every((word) => foundWords.has(word))) {
       wonRef.current = level.id;
       completedLevelRef.current = completedLevel;
       setTimeLeft(null);
