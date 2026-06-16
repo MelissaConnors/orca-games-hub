@@ -24,7 +24,7 @@ export const WORDSEARCH_LEVELS: WordSearchLevel[] = [
     title: "Orca Anatomy",
     theme: "Physical body parts, markings, and physiological structures of killer whales.",
     difficulty: "Easy",
-    gridSize: 10,
+    gridSize: 12,
     directions: ["E", "S"],
     words: ["BLOWHOLE", "DORSAL", "FLUKE", "PECTORAL", "BLUBBER", "SADDLEPATCH", "ROSTRUM", "EYE_PATCH", "JAW", "MELON"],
   },
