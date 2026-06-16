@@ -290,6 +290,12 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
           lastSpawnRef.current[i] += dt;
           const cfg = LANE_CONFIGS[i];
           if (lastSpawnRef.current[i] >= cfg.spawnEvery + Math.random() * 0.6) {
+            const inLane = next.filter(o => o.lane === i + 1).length;
+            if (cfg.maxOnScreen !== undefined && inLane >= cfg.maxOnScreen) {
+              // hold off spawning; retry next frame
+              lastSpawnRef.current[i] = cfg.spawnEvery * 0.5;
+              continue;
+            }
             lastSpawnRef.current[i] = 0;
             const startX = cfg.dir === 1 ? -cfg.width : COLS;
             next.push({
