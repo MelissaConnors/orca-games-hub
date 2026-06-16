@@ -12,6 +12,7 @@ type LaneConfig = {
   dir: 1 | -1;
   width: number; // cells
   spawnEvery: number; // seconds
+  maxOnScreen?: number;
 };
 
 type Obstacle = {
@@ -42,7 +43,7 @@ const TRIDENT_INTERVAL = 2.2; // seconds
 
 const LANE_CONFIGS: LaneConfig[] = [
   // lane index 0 == bottom-most lane (lane 1 in spec, dolphin)
-  { kind: "dolphin", emoji: "🐬", label: "Dolphin", points: 5, speed: 1.2, dir: 1, width: 1, spawnEvery: 1.8 },
+  { kind: "dolphin", emoji: "🐬", label: "Dolphin", points: 5, speed: 1.2, dir: 1, width: 1, spawnEvery: 3.0, maxOnScreen: 3 },
   { kind: "sailboat", emoji: "⛵", label: "Sailboat", points: 10, speed: 1.65, dir: -1, width: 1, spawnEvery: 2.0 },
   { kind: "shark", emoji: "🦈", label: "Shark", points: 15, speed: 2.25, dir: 1, width: 1, spawnEvery: 1.6 },
   { kind: "ferry", emoji: "⛴️", label: "Ferry", points: 20, speed: 0.9, dir: -1, width: 2, spawnEvery: 3.2 },
@@ -74,6 +75,8 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
   const particleIdRef = useRef(0);
   const lastSpawnRef = useRef<number[]>(LANE_CONFIGS.map(() => 0));
   const lastTridentRef = useRef(0);
+  const lastFinalTridentRef = useRef(-Infinity);
+  const tridentElapsedRef = useRef(0);
   const invulnRef = useRef(0);
   const orcaRef = useRef(orca);
   const obstaclesRef = useRef(obstacles);
@@ -289,6 +292,12 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
           lastSpawnRef.current[i] += dt;
           const cfg = LANE_CONFIGS[i];
           if (lastSpawnRef.current[i] >= cfg.spawnEvery + Math.random() * 0.6) {
+            const inLane = next.filter(o => o.lane === i + 1).length;
+            if (cfg.maxOnScreen !== undefined && inLane >= cfg.maxOnScreen) {
+              // hold off spawning; retry next frame
+              lastSpawnRef.current[i] = cfg.spawnEvery * 0.5;
+              continue;
+            }
             lastSpawnRef.current[i] = 0;
             const startX = cfg.dir === 1 ? -cfg.width : COLS;
             next.push({
@@ -326,15 +335,25 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
           .map(p => ({ ...p, x: p.x + p.vx * dt, y: p.y + p.vy * dt, life: p.life - dt }))
           .filter(p => p.life > 0));
 
-        // Tridents
+        // Tridents — at most one active at a time; final inlet has 5s cooldown
+        tridentElapsedRef.current += dt;
         lastTridentRef.current += dt;
         if (lastTridentRef.current > TRIDENT_INTERVAL) {
           lastTridentRef.current = 0;
-          const idx = Math.floor(Math.random() * INLETS);
           setTridents(prev => {
-            const n = new Set(prev);
-            if (n.has(idx)) n.delete(idx); else n.add(idx);
-            return n;
+            if (prev.size > 0) {
+              return new Set(); // hide the active trident
+            }
+            const FINAL = INLETS - 1;
+            const cooling = tridentElapsedRef.current - lastFinalTridentRef.current < 5;
+            const pool: number[] = [];
+            for (let i = 0; i < INLETS; i++) {
+              if (i === FINAL && cooling) continue;
+              pool.push(i);
+            }
+            const idx = pool[Math.floor(Math.random() * pool.length)];
+            if (idx === FINAL) lastFinalTridentRef.current = tridentElapsedRef.current;
+            return new Set([idx]);
           });
         }
       }
