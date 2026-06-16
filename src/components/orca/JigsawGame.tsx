@@ -469,9 +469,9 @@ export function JigsawGame({ onExit }: { onExit: () => void }) {
           <div
             ref={trayRef}
             className="relative rounded-2xl border border-border/60 bg-[#1C2541]/40 backdrop-blur w-full md:w-[340px] overflow-hidden"
-            style={{ height: boardSize }}
+            style={{ height: typeof window !== "undefined" && window.innerWidth < 768 ? Math.max(180, piece * 2 + 48) : boardSize }}
           >
-            <div className="absolute top-3 left-4 text-[10px] uppercase tracking-[0.2em] text-muted-foreground/80 pointer-events-none">
+            <div className="absolute top-3 left-4 text-[10px] uppercase tracking-[0.2em] text-muted-foreground/80 pointer-events-none z-10">
               Piece Tray
             </div>
             <div
@@ -483,6 +483,7 @@ export function JigsawGame({ onExit }: { onExit: () => void }) {
               }}
             />
           </div>
+
         </div>
 
         {/* Pieces — absolutely positioned inside areaRef */}
