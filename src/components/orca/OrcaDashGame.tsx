@@ -521,20 +521,19 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
 
         {/* Orca */}
         <div
-          className="absolute pointer-events-none"
+          className="absolute pointer-events-none grid place-items-center"
           style={{
             left: `${orca.col * cellPct}%`,
             top: `${orca.row * rowPct}%`,
             width: `${cellPct}%`,
             height: `${rowPct}%`,
-            padding: "8%",
             transition: "left 0.08s ease-out, top 0.08s ease-out",
             filter: invulnRef.current > 0 ? "drop-shadow(0 0 8px var(--cyan-accent))" : undefined,
             opacity: invulnRef.current > 0 ? 0.7 : 1,
-            boxSizing: "border-box",
+            zIndex: 10,
           }}
         >
-          <Orca style={{ width: "100%", height: "100%", display: "block" }} />
+          <Orca style={{ width: "88%", height: "88%", display: "block" }} />
         </div>
 
         {/* Particles */}
