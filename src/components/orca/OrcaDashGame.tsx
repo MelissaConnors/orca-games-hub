@@ -554,7 +554,7 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
             <div className="mt-4 space-y-3 text-sm">
               <div>
                 <div className="font-semibold mb-1">How to Score</div>
-                <p className="text-muted-foreground">Avoid side impacts, but <span className="text-foreground font-semibold">ram obstacles from below</span> to destroy them and rack up major points.</p>
+                <p className="text-muted-foreground">Avoid side impacts, but <span className="text-foreground font-semibold">ram obstacles from below or above</span> to destroy them and rack up major points.</p>
               </div>
               <div>
                 <div className="font-semibold mb-1">Scoring</div>
