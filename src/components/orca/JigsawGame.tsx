@@ -252,20 +252,39 @@ export function JigsawGame({ onExit }: { onExit: () => void }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [edgesData]);
 
-  // Keep locked pieces aligned when the board moves (resize)
+  // Keep locked pieces aligned + re-scatter unlocked pieces when tray/board resizes
   useEffect(() => {
+    const tr = trayRectRef.current;
+    if (tr.w <= 0 || tr.h <= 0) return;
+    const w = Math.max(10, tr.w - piece);
+    const h = Math.max(10, tr.h - piece - 8);
     setStates((prev) =>
       prev.map((p, i) => {
-        if (!p.locked) return p;
         const def = defs[i];
+        if (!def) return p;
+        if (p.locked) {
+          return {
+            ...p,
+            x: boardOrigin.x + def.col * cell - tab,
+            y: boardOrigin.y + def.row * cell - tab,
+          };
+        }
+        // If the piece is currently outside the tray, snap it back inside.
+        const inside =
+          p.x >= tr.x - 1 &&
+          p.y >= tr.y - 1 &&
+          p.x <= tr.x + tr.w - piece + 1 &&
+          p.y <= tr.y + tr.h - piece + 1;
+        if (inside) return p;
         return {
           ...p,
-          x: boardOrigin.x + def.col * cell - tab,
-          y: boardOrigin.y + def.row * cell - tab,
+          x: tr.x + Math.random() * w,
+          y: tr.y + 8 + Math.random() * h,
         };
       }),
     );
-  }, [boardOrigin.x, boardOrigin.y, cell, tab, defs]);
+  }, [boardOrigin.x, boardOrigin.y, cell, tab, piece, defs, trayVersion]);
+
 
   // Timer
   useEffect(() => {
