@@ -312,7 +312,7 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
     const tick = (now: number) => {
       const dt = Math.min(0.05, (now - last) / 1000);
       last = now;
-      if (!showHelpRef.current && !gameOverRef.current) {
+      if (!showHelpRef.current && !gameOverRef.current && !podActiveRef.current) {
         invulnRef.current = Math.max(0, invulnRef.current - dt);
         setFlash(f => Math.max(0, f - dt));
 
