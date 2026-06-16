@@ -1,4 +1,4 @@
-import orcaImg from "@/assets/orca.png?url";
+import orcaImg from "@/assets/orca.png";
 
 type Props = {
   className?: string;
@@ -8,9 +8,10 @@ type Props = {
 };
 
 export function Orca({ className, size, flip, style }: Props) {
+  const src = typeof orcaImg === "string" ? orcaImg : (orcaImg as { src?: string })?.src ?? "";
   return (
     <img
-      src={orcaImg}
+      src={src}
       alt="Orca"
       draggable={false}
       className={className}
