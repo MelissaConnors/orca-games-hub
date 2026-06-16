@@ -538,7 +538,7 @@ export function OrcaDashGame({ onExit }: { onExit: () => void }) {
       </div>
 
       <p className="hidden sm:block text-center text-xs text-muted-foreground mt-4">
-        Arrows / WASD to move · Spacebar to Call the Pod · Ram from below for points
+        Arrows / WASD to move · Spacebar to Call the Pod · Ram from below or above for points
       </p>
 
       {/* Help Modal */}
