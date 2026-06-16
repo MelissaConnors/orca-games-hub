@@ -43,7 +43,7 @@ const TRIDENT_INTERVAL = 2.2; // seconds
 
 const LANE_CONFIGS: LaneConfig[] = [
   // lane index 0 == bottom-most lane (lane 1 in spec, dolphin)
-  { kind: "dolphin", emoji: "🐬", label: "Dolphin", points: 5, speed: 1.2, dir: 1, width: 1, spawnEvery: 1.8 },
+  { kind: "dolphin", emoji: "🐬", label: "Dolphin", points: 5, speed: 1.2, dir: 1, width: 1, spawnEvery: 3.0, maxOnScreen: 3 },
   { kind: "sailboat", emoji: "⛵", label: "Sailboat", points: 10, speed: 1.65, dir: -1, width: 1, spawnEvery: 2.0 },
   { kind: "shark", emoji: "🦈", label: "Shark", points: 15, speed: 2.25, dir: 1, width: 1, spawnEvery: 1.6 },
   { kind: "ferry", emoji: "⛴️", label: "Ferry", points: 20, speed: 0.9, dir: -1, width: 2, spawnEvery: 3.2 },
