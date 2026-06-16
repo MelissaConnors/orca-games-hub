@@ -42,11 +42,11 @@ const TRIDENT_INTERVAL = 2.2; // seconds
 
 const LANE_CONFIGS: LaneConfig[] = [
   // lane index 0 == bottom-most lane (lane 1 in spec, dolphin)
-  { kind: "dolphin", emoji: "🐬", label: "Dolphin", points: 5, speed: 1.6, dir: 1, width: 1, spawnEvery: 1.8 },
-  { kind: "sailboat", emoji: "⛵", label: "Sailboat", points: 10, speed: 2.2, dir: -1, width: 1, spawnEvery: 2.0 },
-  { kind: "shark", emoji: "🦈", label: "Shark", points: 15, speed: 3.0, dir: 1, width: 1, spawnEvery: 1.6 },
-  { kind: "ferry", emoji: "⛴️", label: "Ferry", points: 20, speed: 1.2, dir: -1, width: 2, spawnEvery: 3.2 },
-  { kind: "yacht", emoji: "🛥️", label: "Yacht", points: 100, speed: 3.8, dir: 1, width: 1, spawnEvery: 6.5 },
+  { kind: "dolphin", emoji: "🐬", label: "Dolphin", points: 5, speed: 1.2, dir: 1, width: 1, spawnEvery: 1.8 },
+  { kind: "sailboat", emoji: "⛵", label: "Sailboat", points: 10, speed: 1.65, dir: -1, width: 1, spawnEvery: 2.0 },
+  { kind: "shark", emoji: "🦈", label: "Shark", points: 15, speed: 2.25, dir: 1, width: 1, spawnEvery: 1.6 },
+  { kind: "ferry", emoji: "⛴️", label: "Ferry", points: 20, speed: 0.9, dir: -1, width: 2, spawnEvery: 3.2 },
+  { kind: "yacht", emoji: "🛥️", label: "Yacht", points: 100, speed: 2.85, dir: 1, width: 1, spawnEvery: 6.5 },
 ];
 
 // lane index in obstacle: 1..5, where 1 = bottom (row ROWS-2), 5 = top lane (row 1)
