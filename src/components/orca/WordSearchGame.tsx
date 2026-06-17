@@ -154,6 +154,7 @@ export function WordSearchGame({ onExit }: { onExit: () => void }) {
   const [selecting, setSelecting] = useState<{ start: { r: number; c: number }; current: { r: number; c: number } } | null>(null);
   const [layoutSeed, setLayoutSeed] = useState(0);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const [hintCell, setHintCell] = useState<{ r: number; c: number } | null>(null);
   const completedLevelRef = useRef<number | null>(null);
 
   const level = WORDSEARCH_LEVELS.find((l) => l.id === levelId)!;
