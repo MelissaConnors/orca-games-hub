@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, Info, RotateCcw, Lock, Trophy, X, Clock, Sparkles, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Info, RotateCcw, Lock, Trophy, X, Clock, Sparkles, CheckCircle2, Lightbulb } from "lucide-react";
 import { Orca } from "./Orca";
 import {
   WORDSEARCH_LEVELS,
@@ -154,6 +154,7 @@ export function WordSearchGame({ onExit }: { onExit: () => void }) {
   const [selecting, setSelecting] = useState<{ start: { r: number; c: number }; current: { r: number; c: number } } | null>(null);
   const [layoutSeed, setLayoutSeed] = useState(0);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const [hintCell, setHintCell] = useState<{ r: number; c: number } | null>(null);
   const completedLevelRef = useRef<number | null>(null);
 
   const level = WORDSEARCH_LEVELS.find((l) => l.id === levelId)!;
@@ -168,6 +169,7 @@ export function WordSearchGame({ onExit }: { onExit: () => void }) {
     setSelecting(null);
     setShowWin(false);
     setShowTimeUp(false);
+    setHintCell(null);
     if (mode?.kind === "timed") {
       setTimeLeft(TIMED_DIFFICULTIES[mode.difficulty].seconds);
     } else {
@@ -254,6 +256,24 @@ export function WordSearchGame({ onExit }: { onExit: () => void }) {
       line.forEach((p) => next.add(cellKey(p.r, p.c)));
       return next;
     });
+    setHintCell((prev) => {
+      if (!prev) return prev;
+      const matchPlacement = layout.placements.find((pl) => pl.word === match);
+      if (matchPlacement && matchPlacement.cells[0].r === prev.r && matchPlacement.cells[0].c === prev.c) return null;
+      return prev;
+    });
+  };
+
+  const useHint = () => {
+    if (showWin || showTimeUp) return;
+    const nextWord = level.words.find((w) => !foundWords.has(w));
+    if (!nextWord) return;
+    const placement = layout.placements.find((p) => p.word === nextWord);
+    if (!placement) return;
+    setHintCell(placement.cells[0]);
+    if (mode?.kind === "timed") {
+      setTimeLeft((t) => (t === null ? t : t + 10));
+    }
   };
 
   const currentSelectionCells = selecting ? lineCells(selecting.start, selecting.current) : null;
@@ -285,6 +305,13 @@ export function WordSearchGame({ onExit }: { onExit: () => void }) {
               <Clock className="size-3.5" /> {fmt(Math.max(0, timeLeft))}
             </div>
           )}
+          <button
+            onClick={useHint}
+            className="inline-flex items-center gap-1.5 text-xs rounded-full border border-amber-400/50 bg-amber-400/10 text-amber-200 px-3 py-1.5 hover:border-amber-300/80"
+            title={mode.kind === "timed" ? "Hint (+10s to clock)" : "Hint"}
+          >
+            <Lightbulb className="size-3.5" /> Hint{mode.kind === "timed" ? " +10s" : ""}
+          </button>
           <button
             onClick={() => setShowHelp(true)}
             className="inline-flex items-center gap-1.5 text-xs rounded-full border border-border/60 bg-card/40 px-3 py-1.5 hover:border-cyan-accent/50"
@@ -358,6 +385,7 @@ export function WordSearchGame({ onExit }: { onExit: () => void }) {
                 const k = cellKey(r, c);
                 const found = foundCells.has(k);
                 const inSel = selectionSet.has(k);
+                const isHint = !!hintCell && hintCell.r === r && hintCell.c === c && !found;
                 return (
                   <div
                     key={k}
@@ -368,6 +396,8 @@ export function WordSearchGame({ onExit }: { onExit: () => void }) {
                       "aspect-square grid place-items-center rounded-md text-[clamp(0.6rem,2.2vw,1rem)] font-semibold font-mono uppercase transition-colors",
                       found
                         ? "bg-success/30 text-foreground ring-1 ring-success/50"
+                        : isHint
+                        ? "bg-amber-400/40 text-foreground ring-2 ring-amber-300 animate-pulse"
                         : inSel
                         ? "bg-seafoam/40 text-foreground ring-1 ring-seafoam/70"
                         : "bg-background/40 text-foreground/90 hover:bg-background/60",
@@ -522,6 +552,17 @@ function HowToPlayModal({ mode, level, onClose }: { mode: Mode; level: WordSearc
             {mode.kind === "untimed"
               ? "You're in Untimed Mode — relax and take your time."
               : `You're in Timed Mode (${TIMED_DIFFICULTIES[mode.difficulty].label}) — ${TIMED_DIFFICULTIES[mode.difficulty].seconds / 60} minutes per level. The timer resets each new level.`}
+          </p>
+        </div>
+        <div>
+          <p className="font-semibold text-foreground flex items-center gap-1.5">
+            <Lightbulb className="size-4 text-amber-300" /> Hints
+          </p>
+          <p className="text-muted-foreground">
+            Stuck? Tap the Hint button to highlight the first letter of the next word on your list that you haven't found yet.
+            {mode.kind === "timed"
+              ? " Heads up — in Timed Mode each hint adds 10 seconds to the clock."
+              : " Hints are free in Untimed Mode."}
           </p>
         </div>
         <div>
