@@ -266,13 +266,14 @@ export function WordSearchGame({ onExit }: { onExit: () => void }) {
 
   const useHint = () => {
     if (showWin || showTimeUp) return;
+    if (hintCell) return;
     const nextWord = level.words.find((w) => !foundWords.has(w));
     if (!nextWord) return;
     const placement = layout.placements.find((p) => p.word === nextWord);
     if (!placement) return;
     setHintCell(placement.cells[0]);
     if (mode?.kind === "timed") {
-      setTimeLeft((t) => (t === null ? t : t + 10));
+      setTimeLeft((t) => (t === null ? t : Math.max(0, t - 10)));
     }
   };
 
