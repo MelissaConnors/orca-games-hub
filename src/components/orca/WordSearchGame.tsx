@@ -565,6 +565,7 @@ function HowToPlayModal({ mode, level, onClose }: { mode: Mode; level: WordSearc
               : " Hints are free in Untimed Mode."}
           </p>
         </div>
+        <div>
           <p className="font-semibold text-foreground">Progress</p>
           <p className="text-muted-foreground">
             Finishing a level unlocks the next one. Your progress is saved automatically in this browser.
