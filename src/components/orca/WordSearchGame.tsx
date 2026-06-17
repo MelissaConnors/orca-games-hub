@@ -308,10 +308,11 @@ export function WordSearchGame({ onExit }: { onExit: () => void }) {
           )}
           <button
             onClick={useHint}
-            className="inline-flex items-center gap-1.5 text-xs rounded-full border border-amber-400/50 bg-amber-400/10 text-amber-200 px-3 py-1.5 hover:border-amber-300/80"
-            title={mode.kind === "timed" ? "Hint (+10s to clock)" : "Hint"}
+            disabled={!!hintCell}
+            className="inline-flex items-center gap-1.5 text-xs rounded-full border border-amber-400/50 bg-amber-400/10 text-amber-200 px-3 py-1.5 hover:border-amber-300/80 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-amber-400/50"
+            title={hintCell ? "Find the highlighted word to use another hint" : mode.kind === "timed" ? "Hint (−10s from clock)" : "Hint"}
           >
-            <Lightbulb className="size-3.5" /> Hint{mode.kind === "timed" ? " +10s" : ""}
+            <Lightbulb className="size-3.5" /> Hint{mode.kind === "timed" ? " −10s" : ""}
           </button>
           <button
             onClick={() => setShowHelp(true)}
