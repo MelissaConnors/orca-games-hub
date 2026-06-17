@@ -306,6 +306,13 @@ export function WordSearchGame({ onExit }: { onExit: () => void }) {
             </div>
           )}
           <button
+            onClick={useHint}
+            className="inline-flex items-center gap-1.5 text-xs rounded-full border border-amber-400/50 bg-amber-400/10 text-amber-200 px-3 py-1.5 hover:border-amber-300/80"
+            title={mode.kind === "timed" ? "Hint (+10s to clock)" : "Hint"}
+          >
+            <Lightbulb className="size-3.5" /> Hint{mode.kind === "timed" ? " +10s" : ""}
+          </button>
+          <button
             onClick={() => setShowHelp(true)}
             className="inline-flex items-center gap-1.5 text-xs rounded-full border border-border/60 bg-card/40 px-3 py-1.5 hover:border-cyan-accent/50"
           >
