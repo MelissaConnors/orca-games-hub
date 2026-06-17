@@ -561,9 +561,9 @@ function HowToPlayModal({ mode, level, onClose }: { mode: Mode; level: WordSearc
             <Lightbulb className="size-4 text-amber-300" /> Hints
           </p>
           <p className="text-muted-foreground">
-            Stuck? Tap the Hint button to highlight the first letter of the next word on your list that you haven't found yet.
+            Stuck? Tap the Hint button to highlight the first letter of the next word on your list that you haven't found yet. The button is disabled until you find that word, then it unlocks for the next one.
             {mode.kind === "timed"
-              ? " Heads up — in Timed Mode each hint adds 10 seconds to the clock."
+              ? " Heads up — in Timed Mode each hint subtracts 10 seconds from your remaining time as a penalty."
               : " Hints are free in Untimed Mode."}
           </p>
         </div>
