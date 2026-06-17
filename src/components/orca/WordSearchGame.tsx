@@ -385,6 +385,7 @@ export function WordSearchGame({ onExit }: { onExit: () => void }) {
                 const k = cellKey(r, c);
                 const found = foundCells.has(k);
                 const inSel = selectionSet.has(k);
+                const isHint = !!hintCell && hintCell.r === r && hintCell.c === c && !found;
                 return (
                   <div
                     key={k}
@@ -395,6 +396,8 @@ export function WordSearchGame({ onExit }: { onExit: () => void }) {
                       "aspect-square grid place-items-center rounded-md text-[clamp(0.6rem,2.2vw,1rem)] font-semibold font-mono uppercase transition-colors",
                       found
                         ? "bg-success/30 text-foreground ring-1 ring-success/50"
+                        : isHint
+                        ? "bg-amber-400/40 text-foreground ring-2 ring-amber-300 animate-pulse"
                         : inSel
                         ? "bg-seafoam/40 text-foreground ring-1 ring-seafoam/70"
                         : "bg-background/40 text-foreground/90 hover:bg-background/60",
