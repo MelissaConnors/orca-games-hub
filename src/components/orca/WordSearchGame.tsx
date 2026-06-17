@@ -555,6 +555,16 @@ function HowToPlayModal({ mode, level, onClose }: { mode: Mode; level: WordSearc
           </p>
         </div>
         <div>
+          <p className="font-semibold text-foreground flex items-center gap-1.5">
+            <Lightbulb className="size-4 text-amber-300" /> Hints
+          </p>
+          <p className="text-muted-foreground">
+            Stuck? Tap the Hint button to highlight the first letter of the next word on your list that you haven't found yet.
+            {mode.kind === "timed"
+              ? " Heads up — in Timed Mode each hint adds 10 seconds to the clock."
+              : " Hints are free in Untimed Mode."}
+          </p>
+        </div>
           <p className="font-semibold text-foreground">Progress</p>
           <p className="text-muted-foreground">
             Finishing a level unlocks the next one. Your progress is saved automatically in this browser.
