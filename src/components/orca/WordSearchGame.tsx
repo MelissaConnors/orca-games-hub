@@ -169,6 +169,7 @@ export function WordSearchGame({ onExit }: { onExit: () => void }) {
     setSelecting(null);
     setShowWin(false);
     setShowTimeUp(false);
+    setHintCell(null);
     if (mode?.kind === "timed") {
       setTimeLeft(TIMED_DIFFICULTIES[mode.difficulty].seconds);
     } else {
