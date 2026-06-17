@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, Info, RotateCcw, Lock, Trophy, X, Clock, Sparkles, CheckCircle2 } from "lucide-react";
+import { ArrowLeft, Info, RotateCcw, Lock, Trophy, X, Clock, Sparkles, CheckCircle2, Lightbulb } from "lucide-react";
 import { Orca } from "./Orca";
 import {
   WORDSEARCH_LEVELS,
