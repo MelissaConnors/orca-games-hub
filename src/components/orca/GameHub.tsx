@@ -45,7 +45,20 @@ const GAMES: Game[] = [
     description: "Race across 5 ocean lanes, ram from below for points, call your pod to wipe the screen.",
     status: "active",
   },
-
+  {
+    id: "save-the-planet",
+    title: "Orcas Save the Planet",
+    emoji: "🛸",
+    description: "Defend Earth as an elite orca squadron against extraterrestrial invaders.",
+    status: "coming-soon",
+  },
+  {
+    id: "connect-pod",
+    title: "Connect Pod",
+    emoji: "🔗",
+    description: "Reunite the scattered pod by linking orcas across the grid before time runs out.",
+    status: "coming-soon",
+  },
 ];
 
 export function GameHub({ onPlay }: { onPlay: (id: string) => void }) {
