@@ -256,6 +256,24 @@ export function WordSearchGame({ onExit }: { onExit: () => void }) {
       line.forEach((p) => next.add(cellKey(p.r, p.c)));
       return next;
     });
+    setHintCell((prev) => {
+      if (!prev) return prev;
+      const matchPlacement = layout.placements.find((pl) => pl.word === match);
+      if (matchPlacement && matchPlacement.cells[0].r === prev.r && matchPlacement.cells[0].c === prev.c) return null;
+      return prev;
+    });
+  };
+
+  const useHint = () => {
+    if (showWin || showTimeUp) return;
+    const nextWord = level.words.find((w) => !foundWords.has(w));
+    if (!nextWord) return;
+    const placement = layout.placements.find((p) => p.word === nextWord);
+    if (!placement) return;
+    setHintCell(placement.cells[0]);
+    if (mode?.kind === "timed") {
+      setTimeLeft((t) => (t === null ? t : t + 10));
+    }
   };
 
   const currentSelectionCells = selecting ? lineCells(selecting.start, selecting.current) : null;
