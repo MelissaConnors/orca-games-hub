@@ -266,13 +266,14 @@ export function WordSearchGame({ onExit }: { onExit: () => void }) {
 
   const useHint = () => {
     if (showWin || showTimeUp) return;
+    if (hintCell) return;
     const nextWord = level.words.find((w) => !foundWords.has(w));
     if (!nextWord) return;
     const placement = layout.placements.find((p) => p.word === nextWord);
     if (!placement) return;
     setHintCell(placement.cells[0]);
     if (mode?.kind === "timed") {
-      setTimeLeft((t) => (t === null ? t : t + 10));
+      setTimeLeft((t) => (t === null ? t : Math.max(0, t - 10)));
     }
   };
 
@@ -307,10 +308,11 @@ export function WordSearchGame({ onExit }: { onExit: () => void }) {
           )}
           <button
             onClick={useHint}
-            className="inline-flex items-center gap-1.5 text-xs rounded-full border border-amber-400/50 bg-amber-400/10 text-amber-200 px-3 py-1.5 hover:border-amber-300/80"
-            title={mode.kind === "timed" ? "Hint (+10s to clock)" : "Hint"}
+            disabled={!!hintCell}
+            className="inline-flex items-center gap-1.5 text-xs rounded-full border border-amber-400/50 bg-amber-400/10 text-amber-200 px-3 py-1.5 hover:border-amber-300/80 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:border-amber-400/50"
+            title={hintCell ? "Find the highlighted word to use another hint" : mode.kind === "timed" ? "Hint (−10s from clock)" : "Hint"}
           >
-            <Lightbulb className="size-3.5" /> Hint{mode.kind === "timed" ? " +10s" : ""}
+            <Lightbulb className="size-3.5" /> Hint{mode.kind === "timed" ? " −10s" : ""}
           </button>
           <button
             onClick={() => setShowHelp(true)}
@@ -559,9 +561,9 @@ function HowToPlayModal({ mode, level, onClose }: { mode: Mode; level: WordSearc
             <Lightbulb className="size-4 text-amber-300" /> Hints
           </p>
           <p className="text-muted-foreground">
-            Stuck? Tap the Hint button to highlight the first letter of the next word on your list that you haven't found yet.
+            Stuck? Tap the Hint button to highlight the first letter of the next word on your list that you haven't found yet. The button is disabled until you find that word, then it unlocks for the next one.
             {mode.kind === "timed"
-              ? " Heads up — in Timed Mode each hint adds 10 seconds to the clock."
+              ? " Heads up — in Timed Mode each hint subtracts 10 seconds from your remaining time as a penalty."
               : " Hints are free in Untimed Mode."}
           </p>
         </div>
